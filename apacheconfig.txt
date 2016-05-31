@@ -1,3 +1,9 @@
+Configuring apache2 to allow python scripts to be executed by client-side javascript.
+
+run this command:
+
+sudo a2enmod cgi
+
 add this to /etc/apache2/apache2.conf
 
 <Directory /var/www/html/python>
@@ -5,5 +11,9 @@ add this to /etc/apache2/apache2.conf
     AddHandler cgi-script .py
 </Directory>
 
+make the apache user, which is called "www-data" the owner of python and data folders
+
+
+sudo chown -R www-data python
 
 
