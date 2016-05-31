@@ -25,8 +25,8 @@ var STD = 3;
 
 // graph names
 
-var sensor_names_master = ["sensor_0", "sensor_1", "sensor_2", "sensor_3", "sensor_4", "sensor_5", "sensor_6", "sensor_7"]
-var sensor_names_mol = ["sensor_0", "sensor_1", "sensor_2", "sensor_3", "sensor_4", "sensor_5", "sensor_6", "sensor_7"]
+var sensor_names_master = ["MAT Table", "Master Table", "PAT Table", "A023 Building Sensor", "sensor_4", "sensor_5", "sensor_6", "sensor_7"]
+var sensor_names_mol = ["Comb Table", "A012 Building Sensor", "MOL Table", "MOL Cooling Inlet", "sensor_4", "sensor_5", "sensor_6", "sensor_7"]
 
 
 // options for highcharts graphs
@@ -255,7 +255,7 @@ updateGraphTitle("master", 0, "short");
 
 Highcharts.setOptions({
 	global: {
-		timezoneOffset: 8 * 60
+		timezoneOffset: 9 * 60
 	}
 });
 

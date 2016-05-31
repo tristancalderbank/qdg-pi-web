@@ -384,9 +384,9 @@ room_name = str(arguments["room"].value)
 sensor_number = str(arguments["sensor"].value)
 short_or_long_term = str(arguments["longshort"].value)
 
-data_directory = '/var/www/html/data/'
+data_directory = '/var/www/qdg-pi-web/data/'
 input_directory = data_directory + room_name + "/sensor_" + sensor_number
-output_directory = '/var/www/html/data/page-data/'
+output_directory = '/var/www/qdg-pi-web/data/page-data/'
 
 if(short_or_long_term == 'short'):
     # process short stuff
