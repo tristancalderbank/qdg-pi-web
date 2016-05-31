@@ -1,0 +1,9 @@
+add this to /etc/apache2/apache2.conf
+
+<Directory /var/www/html/python>
+    Options +ExecCGI
+    AddHandler cgi-script .py
+</Directory>
+
+
+
