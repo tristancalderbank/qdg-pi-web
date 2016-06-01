@@ -22,12 +22,12 @@
 
 <body>
 
-<nav style="position: fixed;">
+<nav style="position: fixed; overflow-y: scroll;">
 	<ul class="cd-accordion-menu animated">
 		<li class="has-children">
 		<!-- remove 'checked' from input type to default item 'closed' on page load-->
-		<input type="checkbox" name="group-1" id="group-1" checked="">
-		<label for="group-1">Master</label>
+		<input type="checkbox" name="group-1" id="group-1">
+		<label for="group-1" id="master-hover">Master</label>
 
 		<ul style="display: none;">
 
@@ -117,7 +117,7 @@
 
 	<li class="has-children">
 		<!-- remove 'checked' from input type to default item 'closed' on page load-->
-		<input type="checkbox" name="group-2" id="group-2" checked="">
+		<input type="checkbox" name="group-2" id="group-2">
 		<label for="group-2">MOL</label>
 
 		<ul style="display: none;">

@@ -86,12 +86,12 @@ Main Components
   position: relative;
   display: block;
   padding: 18px 18px 18px 64px;
-  background: #546B75;
+  background: #DF5E5E;
   color: #ffffff;
   font-size: 1.6rem;
 }
 .no-touch .cd-accordion-menu label:hover, .no-touch .cd-accordion-menu a:hover {
-  background: #52565d;
+  background: #e26e6e;
 }
 .cd-accordion-menu label::before, .cd-accordion-menu label::after, .cd-accordion-menu a::after {
   /* icons */
@@ -274,5 +274,4 @@ th {
 .bottom-three {
 	margin-bottom: 3cm;
 }
-
 

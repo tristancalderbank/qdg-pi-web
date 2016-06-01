@@ -23,11 +23,10 @@ var MIN = 1;
 var MEAN = 2;
 var STD = 3;
 
-// graph names
+var sensor_names_master = ["MAT Table", "Master Table", "PAT Table", "A023 Building Sensor", "sensor_4", "sensor_5", "sensor_6", "sensor_7"];
+var sensor_names_mol = ["Comb Table", "A012 Building Sensor", "MOL Table", "MOL Cooling Inlet", "sensor_4", "sensor_5", "sensor_6", "sensor_7"];
 
-var sensor_names_master = ["MAT Table", "Master Table", "PAT Table", "A023 Building Sensor", "sensor_4", "sensor_5", "sensor_6", "sensor_7"]
-var sensor_names_mol = ["Comb Table", "A012 Building Sensor", "MOL Table", "MOL Cooling Inlet", "sensor_4", "sensor_5", "sensor_6", "sensor_7"]
-
+var room_names = ["master", "mol"];
 
 // options for highcharts graphs
 
@@ -247,11 +246,26 @@ var options_long = {
 	}
 
 // initialization for first page load
+//
+for (i = 0; i < 2; i++){
+
+	for(j = 0; j < 8; j++){
+		processData(room_names[i], String(j), "short");
+		processData(room_names[i], String(j), "long");
+
+	}
+
+}
 
 updateGraphShort("data/page-data/master-sensor-0-short.csv");
 updateTable("master-sensor-0-short-stats.csv");
 updateGraphTitle("master", 0, "short");
 
+// open the menu to the first graph
+$(document).ready(function () {
+	    $("#group-1").click();
+		$("#sub-group-1").click();
+});
 
 Highcharts.setOptions({
 	global: {
@@ -450,14 +464,8 @@ $("li").click(function() {
 		   room_name = String(properties[2]);
 		   short_or_long = String(properties[3]);
 
-		// Tell server to process required data with python script
-		$.ajax({
-			  type: "POST",
-			  url: "/python/process_data.py",
-			  data: { room: room_name, sensor: sensor_number, longshort: short_or_long }
-		}).done(function( o ) {
-			   });
-		
+		processData(room_name, sensor_number, short_or_long);
+	
 		updateTable(room_name + "-sensor-" + sensor_number + "-" + short_or_long + "-stats.csv")
 
 		updateGraphTitle(room_name, Number(sensor_number), short_or_long);
@@ -505,8 +513,23 @@ function updateGraphTitle(room_name, sensor_number, short_or_long){
 
 }
 
+//------------------------------------------------#
+// processData()                                  #
+//                                                #
+// sends a request for the server to run the data #
+// processing script                              #
+//------------------------------------------------#
 
+function processData(room_name, sensor_number, short_or_long){
 
+$.ajax({
+	  type: "POST",
+	  url: "/python/process_data.py",
+	  data: { room: room_name, sensor: sensor_number, longshort: short_or_long }
+}).done(function( o ) {
+	   });
+
+}
 
 
 
