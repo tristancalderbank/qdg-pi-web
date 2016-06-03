@@ -246,7 +246,7 @@ var options_long = {
 	}
 
 // initialization for first page load
-//
+
 for (i = 0; i < 2; i++){
 
 	for(j = 0; j < 8; j++){
@@ -264,7 +264,10 @@ updateGraphTitle("master", 0, "short");
 // open the menu to the first graph
 $(document).ready(function () {
 	    $("#group-1").click();
+		$("#group-2").click();
 		$("#sub-group-1").click();
+		$("#group-1").attr("disabled", true);
+		$("#group-2").attr("disabled", true);
 });
 
 Highcharts.setOptions({
@@ -335,6 +338,8 @@ function getRangeSeries(matrix, column_1, column_2){
 
 function updateGraphLong(path_to_data_file){
 
+setTimeout(function() {  // add a delay because the file may need to be created first
+
 $.get(path_to_data_file, function(data){
 
 	short_data = $.csv.toArrays(data);
@@ -360,6 +365,8 @@ $.get(path_to_data_file, function(data){
 
 });
 
+}, 500);
+
 }
 
 //------------------------------------------------#
@@ -371,6 +378,8 @@ $.get(path_to_data_file, function(data){
 //------------------------------------------------#
 
 function updateGraphShort(path_to_data_file){
+
+setTimeout(function() {  // add a delay because the file may need to be created first
 
 $.get(path_to_data_file, function(data){
 
@@ -386,6 +395,7 @@ $.get(path_to_data_file, function(data){
 	$('#container').highcharts(options_short);
 
 });
+}, 500);
 
 }
 
@@ -433,6 +443,8 @@ function pushToTable(array, type){
 
 function updateTable(stat_file){
 
+setTimeout(function() {  // add a delay because the file may need to be created first
+
 $.get('data/page-data/' + stat_file, function(data) {
 
 		    stats = $.csv.toArrays(data);
@@ -446,6 +458,8 @@ $.get('data/page-data/' + stat_file, function(data) {
 		    pushToTable(humidity_stats_long, "humidity");
 		    
 });
+
+}, 500);
 
 };
 
