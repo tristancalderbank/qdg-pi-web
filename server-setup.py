@@ -59,10 +59,58 @@ call(["sudo", "mkdir", "/etc/redis"])
 call(["sudo", "mkdir", "/var/redis"])
 call(["sudo", "cp", "utils/redis_init_script", "/etc/init.d/redis_6379"])
 
+
 install_message("Cloning web files to /var/www/...")
 operating_directory = "/home/var/www"
 os.chdir(operating_directory)
 call(["sudo", "git", "clone", "https://github.com/tristancalderbank/qdg-pi-web"])
 
-call(["sudo", "cp", "/home/pi/qdg-pi/6379.conf", "/etc/redis/6379.conf"])
+call(["sudo", "cp", "/var/www/qdg-pi-web/config/6379.conf", "/etc/redis/6379.conf"])
+
+
+
+
+install_message("Backing up current apache configuration...")
+call(["sudo", "mv", "/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.config"])
+call(["sudo", "mv", "/etc/apache2/sites-available/000-default.conf", "/etc/apache2/sites-available/000-default-backup.conf"])
+install_message("Installing qdg-pi config for apache...")
+call(["sudo", "cp", "/var/www/qdg-pi-web/config/apache2.conf", "/etc/apache2/apache2.conf"])
+call(["sudo", "cp", "/var/www/qdg-pi-web/config/000-default.conf", "/etc/apache2/sites-available/000-default.conf"])
+call(["sudo", "a2enmod", "cgi"])
+
+install_message("Adding apache user as owner of data and python folders in web directory...")
+call(["sudo", "chown", "-R", "www-data", "/var/www/qdg-pi-web/python"])
+call(["sudo", "chown", "-R", "www-data", "/var/www/qdg-pi-web/data"])
+
+install_message("Setting up python subscribe script and redis as cronjobs...")
+call(["crontab", "-l", "|", "{ cat; echo "@reboot sudo redis-server /etc/redis/6379.conf"; }", "|", "crontab", "-"])
+call(["crontab", "-l", "|", "{ cat; echo "@reboot sudo python /var/www/qdg-pi-web/python/subscribe.py"; }", "|", "crontab", "-"])
+
+install_message("Restarting apache server...")
+call(["sudo", "service", "apache2", "restart"])
+
+install_message("Starting redis-server...")
+call(["sudo", "redis-server", "/etc/redis/6379.conf"])
+
+install_message("Starting python subscribe script...")
+call(["sudo", "python", "/var/www/qdg-pi-web/python/subscribe.py", "&"])
+
+install_message("Done.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
