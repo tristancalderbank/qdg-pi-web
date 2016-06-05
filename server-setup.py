@@ -5,8 +5,9 @@
 # author: tristan calderbank
 # contact: tristan@alumni.ubc.ca
 # purpose: performs setup of data recieving and server system on host computer
-#          
+#
 from subprocess import call
+from subprocess import Popen
 import time
 import os
 
@@ -17,7 +18,7 @@ def install_message(message):
     time.sleep(3)
 
 username = raw_input("Enter linux username: ")
-"""
+
 # update packages
 install_message("Updating packages via apt-get...")
 call(["sudo", "apt-get", "update"])
@@ -39,18 +40,16 @@ call(["sudo", "pip", "install", "redis"])
 
 # download and compile redis
 install_message("Downloading redis...")
-
 operating_directory = "/home/" + username + "/Downloads/"
 os.chdir(operating_directory)
 redis_download_link = "http://download.redis.io/redis-stable.tar.gz"
 call(["sudo", "wget", redis_download_link])
-"""
 install_message("Installing redis...")
-#call(["sudo", "tar", "xvaf", "redis-stable.tar.gz"])
+call(["sudo", "tar", "xvaf", "redis-stable.tar.gz"])
 operating_directory = "/home/" + username + "/Downloads/" + "redis-stable"
 os.chdir(operating_directory)
-#call(["sudo", "make"])
-#call(["sudo", "make", "test"])
+call(["sudo", "make"])
+call(["sudo", "make", "test"])
 
 call(["sudo", "killall", "redis-server"])
 call(["sudo" , "cp", "src/redis-server", "/usr/local/bin/"])
@@ -59,17 +58,15 @@ call(["sudo", "mkdir", "/etc/redis"])
 call(["sudo", "mkdir", "/var/redis"])
 call(["sudo", "cp", "utils/redis_init_script", "/etc/init.d/redis_6379"])
 
-
+# Get repo for website files
 install_message("Cloning web files to /var/www/...")
-operating_directory = "/home/var/www"
+operating_directory = "/var/www"
 os.chdir(operating_directory)
 call(["sudo", "git", "clone", "https://github.com/tristancalderbank/qdg-pi-web"])
 
+# Redis / Apache config
+install_message("Configuring redis and apache...")
 call(["sudo", "cp", "/var/www/qdg-pi-web/config/6379.conf", "/etc/redis/6379.conf"])
-
-
-
-
 install_message("Backing up current apache configuration...")
 call(["sudo", "mv", "/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.config"])
 call(["sudo", "mv", "/etc/apache2/sites-available/000-default.conf", "/etc/apache2/sites-available/000-default-backup.conf"])
@@ -82,19 +79,15 @@ install_message("Adding apache user as owner of data and python folders in web d
 call(["sudo", "chown", "-R", "www-data", "/var/www/qdg-pi-web/python"])
 call(["sudo", "chown", "-R", "www-data", "/var/www/qdg-pi-web/data"])
 
+# Cronjobs
 install_message("Setting up python subscribe script and redis as cronjobs...")
-call(["crontab", "-l", "|", "{ cat; echo "@reboot sudo redis-server /etc/redis/6379.conf"; }", "|", "crontab", "-"])
-call(["crontab", "-l", "|", "{ cat; echo "@reboot sudo python /var/www/qdg-pi-web/python/subscribe.py"; }", "|", "crontab", "-"])
-
+call(["sudo", "cp", "/var/www/qdg-pi-web/config/qdg-pi-cron", "/etc/cron.d/qdg-pi-cron"])
 install_message("Restarting apache server...")
 call(["sudo", "service", "apache2", "restart"])
-
 install_message("Starting redis-server...")
 call(["sudo", "redis-server", "/etc/redis/6379.conf"])
-
 install_message("Starting python subscribe script...")
-call(["sudo", "python", "/var/www/qdg-pi-web/python/subscribe.py", "&"])
-
+Popen(["sudo", "python", "/var/www/qdg-pi-web/python/subscribe.py"])
 install_message("Done.")
 
 

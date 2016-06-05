@@ -4,11 +4,38 @@ import redis
 import csv
 
 # configuration
+master_table_IP = '10.1.137.162'
+MOL_lab_IP = '10.1.137.203'
 server_port = '6379'
 server_ip = 'localhost'
 max_number_of_sensors = 8
 room_names = ["mol", "master"]
 
+
+def connect_to_server(server_ip,server_port):
+    r = redis.StrictRedis(host=server_ip, port=server_port, db=0)
+    connected = False
+    while connected == False:
+        try:
+            server_connection = redis.StrictRedis(host=server_ip, port=server_port, db=0)
+            server_connection.ping()
+            connected = True
+            print "Successfully connected to redis-server at " + server_ip +"."
+        except redis.exceptions.ConnectionError:
+            print "Couldn't connect to redis server at " + server_ip + ", trying again in 5 seconds..."
+            time.sleep(5)
+
+    return server_connection
+
+def check_if_connected(server_connection, server_ip, server_port):
+    try:
+        server_connection.ping()
+        print "Still connected to server at " + server_ip + "." 
+    except redis.exceptions.ConnectionError:
+        print "Server at " + server_ip + " was disconnected, trying again..."
+        server_connection = connect_to_server(server_ip, server_port)
+
+    return server_connection
 
 
 def get_message(pubsub):
@@ -48,24 +75,22 @@ def write_to_file(data_directory, room, timestamp, sensor_data):
 
         sensor_number+=1
 
-website_data_directory = "/var/www/qdg-pi-web/data/"
-
-server_connection = redis.StrictRedis(host=server_ip, port=server_port, db=0)
-
-pubsub = server_connection.pubsub(ignore_subscribe_messages=True)
-
-for room in room_names:
-    pubsub.subscribe(room)
+website_data_directory = "/var/www/html/data/"
 
 # main loop
 
 while True:
 
-    message = get_message(pubsub)
-    room, timestamp, sensor_data = parse_message(message)
-    print timestamp
-    write_to_file(website_data_directory, room, timestamp, sensor_data)
-
+    try:
+        message = get_message(pubsub)
+        room, timestamp, sensor_data = parse_message(message)
+        print timestamp
+        write_to_file(website_data_directory, room, timestamp, sensor_data)
+    except:
+        server_connection = connect_to_server(host=server_ip, port=server_port, db=0)
+        pubsub = server_connection.pubsub(ignore_subscribe_messages=True)
+        for room in room_names:
+            pubsub.subscribe(room)
 
 
 
