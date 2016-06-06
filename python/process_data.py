@@ -230,53 +230,50 @@ def process_stats_long_term(input_file, output_file):
 #------------------------------------------------#
 def process_short_term(directory, output_path, N=1):
 
-    try:
 
-        file_list = get_sorted_file_list(directory)
-        number_of_days = len(file_list)
+    file_list = get_sorted_file_list(directory)
+    number_of_days = len(file_list)
 
-        if(number_of_days == 0):
-            print "Looks like there's no data to process..."
-            return
+    if(number_of_days == 0):
+        print "Looks like there's no data to process..."
+        return
 
-        row_number = 0
-        most_recent_timestamp = get_latest_timestamp(directory, file_list[-1])
+    row_number = 0
+    most_recent_timestamp = get_latest_timestamp(directory, file_list[-1])
 
-        # to get 24 hours of data, only need last two days at most
-        if number_of_days > 1:
-            file_list = file_list[-2:]
+    # to get 24 hours of data, only need last two days at most
+    if number_of_days > 1:
+        file_list = file_list[-2:]
 
-        with open(output_path, 'w') as output_file:
+    with open(output_path, 'w') as output_file:
 
-            output_file_csv = csv.writer(output_file)
-            start_writing = False
+        output_file_csv = csv.writer(output_file)
+        start_writing = False
 
-            for file in file_list:
+        for file in file_list:
 
-                file_path = directory + '/' + file
+            file_path = directory + '/' + file
 
-                with open(file_path, 'r') as current_file:
+            with open(file_path, 'r') as current_file:
 
-                    input_file_csv = csv.reader(current_file, delimiter=',')
-                    for row in input_file_csv:
+                input_file_csv = csv.reader(current_file, delimiter=',')
+                for row in input_file_csv:
 
-                        current_timestamp = date_string_to_unix_stamp(row[0])
+                    current_timestamp = date_string_to_unix_stamp(row[0])
 
-                        if number_of_days == 1:
-                            start_writing = True
+                    if number_of_days == 1:
+                        start_writing = True
 
-                        if number_of_days > 1 and (most_recent_timestamp - current_timestamp) < SHORT_TERM_TIME:
-                            start_writing = True
+                    if number_of_days > 1 and (most_recent_timestamp - current_timestamp) < SHORT_TERM_TIME:
+                        start_writing = True
 
-                        if(row_number % N == 0) and start_writing == True:
-                            row[0] = str(time.mktime(datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S").timetuple()))
-                            output_file_csv.writerow(row)
-                            row_number +=1
+                    if(row_number % N == 0) and start_writing == True:
+                        row[0] = str(time.mktime(datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S").timetuple()))
+                        output_file_csv.writerow(row)
+                        row_number +=1
 
-        print "Processed " + str(row_number) + " rows of data sucessfully."
+    print "Processed " + str(row_number) + " rows of data sucessfully."
 
-    except:
-        print "Short term processing failed..."
 
 #------------------------------------------------#
 # get_latest_timestamp()                         #

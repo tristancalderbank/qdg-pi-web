@@ -87,7 +87,7 @@ while True:
         print timestamp
         write_to_file(website_data_directory, room, timestamp, sensor_data)
     except:
-        server_connection = connect_to_server(host=server_ip, port=server_port, db=0)
+        server_connection = connect_to_server(server_ip, server_port)
         pubsub = server_connection.pubsub(ignore_subscribe_messages=True)
         for room in room_names:
             pubsub.subscribe(room)
