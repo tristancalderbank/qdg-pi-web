@@ -75,7 +75,7 @@ def write_to_file(data_directory, room, timestamp, sensor_data):
 
         sensor_number+=1
 
-website_data_directory = "/var/www/html/data/"
+website_data_directory = "/var/www/qdg-pi-web/data/"
 
 # main loop
 
@@ -84,7 +84,6 @@ while True:
     try:
         message = get_message(pubsub)
         room, timestamp, sensor_data = parse_message(message)
-        print timestamp
         write_to_file(website_data_directory, room, timestamp, sensor_data)
     except:
         server_connection = connect_to_server(server_ip, server_port)

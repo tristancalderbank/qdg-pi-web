@@ -272,7 +272,7 @@ $(document).ready(function () {
 
 Highcharts.setOptions({
 	global: {
-		timezoneOffset: 9 * 60
+		timezoneOffset: 7 * 60
 	}
 });
 
