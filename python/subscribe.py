@@ -2,6 +2,7 @@ import sys
 import os
 import redis
 import csv
+import fcntl
 
 # configuration
 master_table_IP = '10.1.137.162'
@@ -68,10 +69,19 @@ def write_to_file(data_directory, room, timestamp, sensor_data):
             if not os.path.exists(sensor_directory):
                     os.makedirs(sensor_directory)
 
+
+
+
             data_file = open(sensor_file_path, "ab")
+            fcntl.flock(data_file, fcntl.LOCK_EX)
+
             file_writer = csv.writer(data_file)
             file_writer.writerow([timestamp, sensor[0], sensor[1], sensor[2]]) 
+
+            fcntl.flock(data_file, fcntl.LOCK_UN)
             data_file.close()
+
+
 
         sensor_number+=1
 
@@ -85,14 +95,13 @@ while True:
         message = get_message(pubsub)
         room, timestamp, sensor_data = parse_message(message)
         write_to_file(website_data_directory, room, timestamp, sensor_data)
+        print sensor_data
+    except KeyboardInterrupt:
+        raise
+        exit()    
     except:
         server_connection = connect_to_server(server_ip, server_port)
         pubsub = server_connection.pubsub(ignore_subscribe_messages=True)
         for room in room_names:
             pubsub.subscribe(room)
-
-
-
-
-
 

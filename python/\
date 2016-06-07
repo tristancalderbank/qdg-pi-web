@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import cgi
-#import cgitb; cgitb.enable()  # for troubleshooting
+import cgitb; cgitb.enable()  # for troubleshooting
 
 print "Content-type: text/html"
 print
@@ -25,7 +25,6 @@ import time
 import datetime
 import math
 import os.path
-import fcntl
 # constants
 
 SHORT_TERM_TIME = 60 * 60 * 24 # 24 hours in seconds
@@ -104,13 +103,8 @@ def condense_file(input_file, output_file, N, total_rows, cutoff):
 def csv_file_to_matrix(input_path):
 
     with open(input_path, 'r') as input_file:
-
-        fcntl.flock(input_file, fcntl.LOCK_EX)
-
         input_file_csv = csv.reader(input_file, delimiter=',')
         matrix = numpy.array(list(input_file_csv))
-
-        fcntl.flock(input_file, fcntl.LOCK_UN)
 
     return matrix
 
@@ -152,7 +146,6 @@ def get_stats(matrix, column):
 #------------------------------------------------#
 def get_stats_long(matrix, column):
 
-
     max = round(numpy.max(matrix[:, column + MAX].astype(float)), 2)
     min = round(numpy.min(matrix[:, column + MIN].astype(float)), 2)
     mean = round(numpy.mean(matrix[:, column + MEAN].astype(float)), 2)
@@ -181,7 +174,7 @@ def process_stats_short_term(input_file, output_file):
 
     if(os.path.isfile(input_file) == True):
 
-        with open(output_file, 'w') as output_file:
+        with open(output_file, 'wb') as output_file:
             output_file_csv = csv.writer(output_file, delimiter=',')
             with open(input_file, 'r') as input_file:
                 input_file_csv = csv.reader(input_file, delimiter=',')
@@ -208,7 +201,7 @@ def process_stats_long_term(input_file, output_file):
 
     if(os.path.isfile(input_file) == True):
 
-        with open(output_file, 'w') as output_file:
+        with open(output_file, 'wb') as output_file:
             output_file_csv = csv.writer(output_file, delimiter=',')
             with open(input_file, 'r') as input_file:
                 input_file_csv = csv.reader(input_file, delimiter=',')
@@ -252,7 +245,7 @@ def process_short_term(directory, output_path, N=1):
     if number_of_days > 1:
         file_list = file_list[-2:]
 
-    with open(output_path, 'w') as output_file:
+    with open(output_path, 'wb') as output_file:
 
         output_file_csv = csv.writer(output_file)
         start_writing = False
@@ -315,7 +308,7 @@ def date_string_to_unix_stamp(string):
 #------------------------------------------------#
 # process_long_term()                            #
 #                                                #
-# Creates or adds to a long term file with       #
+# Creates or adds to a long term stats file with #
 # one row for each day, using csv files from a   #
 # given directory                                #
 #                                                #
@@ -336,13 +329,13 @@ def process_long_term(directory, output_path):
 
     if os.path.getsize(output_path) > 0: 
         previous_file = csv_file_to_matrix(output_path)
+        print previous_file
         previous_days = previous_file[:,0].astype(float)
 
-    with open(output_path, 'r+') as output_file:
+    with open(output_path, 'rb+') as output_file:
 
         number_processed = 0
-
-        output_file_csv = csv.writer(output_file, delimiter=',')
+        output_file_csv = csv.writer(output_file)
 
         for file in file_list:
 
@@ -364,14 +357,8 @@ def process_long_term(directory, output_path):
                 current_file_matrix = csv_file_to_matrix(file_path)
 
                 # get the number of rows in the file as its needed to calculate total std later
-
                 with open(file_path, 'r') as current_file:
-
-                    fcntl.flock(current_file, fcntl.LOCK_EX)
-
                     current_file_num_rows = len(current_file.readlines())
-
-                    fcntl.flock(current_file, fcntl.LOCK_UN)
 
                 unix_date = date_to_unix_stamp(file.split('.', 1)[0])
 
@@ -398,29 +385,23 @@ short_or_long_term = str(sys.argv[3])
 data_directory = '/var/www/qdg-pi-web/data/'
 input_directory = data_directory + room_name + "/sensor_" + sensor_number
 output_directory = '/var/www/qdg-pi-web/data/page-data/'
-times_run = 0
 
-while True:
+if(short_or_long_term == 'short'):
+    # process short stuff
+    output_path = output_directory + room_name + '-sensor-' + sensor_number + '-short.csv'
+    output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-short-stats.csv'
 
-    if(short_or_long_term == 'short'):
-        # process short stuff
-        output_path = output_directory + room_name + '-sensor-' + sensor_number + '-short.csv'
-        output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-short-stats.csv'
-
-        process_short_term(input_directory, output_path, 1)
-        process_stats_short_term(output_path, output_path_stats) 
+    process_short_term(input_directory, output_path, 1)
+    process_stats_short_term(output_path, output_path_stats) 
 
 
-    elif (short_or_long_term == 'long'):
-        # process long term stuff
-        output_path = output_directory + room_name + '-sensor-' + sensor_number + '-long.csv'
-        output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-long-stats.csv'
+elif (short_or_long_term == 'long'):
+    # process long term stuff
+    output_path = output_directory + room_name + '-sensor-' + sensor_number + '-long.csv'
+    output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-long-stats.csv'
 
-        process_long_term(input_directory, output_path)
-        process_stats_long_term(output_path, output_path_stats)
-
-    times_run +=1
-    print times_run
+    process_long_term(input_directory, output_path)
+    process_stats_long_term(output_path, output_path_stats)
 
 
 

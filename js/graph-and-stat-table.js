@@ -7,6 +7,7 @@
 // purpose: Handles highcharts graph, buttons, stat table
 //          
 
+var PROCESSING_DELAY_TIME = 1000;
 
 // array indexes
 
@@ -365,7 +366,7 @@ $.get(path_to_data_file, function(data){
 
 });
 
-}, 500);
+}, PROCESSING_DELAY_TIME);
 
 }
 
@@ -395,7 +396,7 @@ $.get(path_to_data_file, function(data){
 	$('#container').highcharts(options_short);
 
 });
-}, 500);
+}, PROCESSING_DELAY_TIME);
 
 }
 
@@ -459,7 +460,7 @@ $.get('data/page-data/' + stat_file, function(data) {
 		    
 });
 
-}, 500);
+}, PROCESSING_DELAY_TIME);
 
 };
 
@@ -479,6 +480,7 @@ $("li").click(function() {
 		   short_or_long = String(properties[3]);
 
 		processData(room_name, sensor_number, short_or_long);
+        //alert("data/page-data/" + room_name + "-sensor-" + sensor_number + "-short.csv");
 	
 		updateTable(room_name + "-sensor-" + sensor_number + "-" + short_or_long + "-stats.csv")
 
