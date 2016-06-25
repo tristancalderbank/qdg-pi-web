@@ -384,43 +384,43 @@ def process_long_term(directory, output_path):
 
 # Main program
 
-room_name = str(sys.argv[1])
-sensor_number = str(sys.argv[2])
-short_or_long_term = str(sys.argv[3])
+#room_name = str(sys.argv[1])
+#sensor_number = str(sys.argv[2])
+#short_or_long_term = str(sys.argv[3])
 
 
-#arguments = cgi.FieldStorage()
+arguments = cgi.FieldStorage()
 
-#room_name = str(arguments["room"].value)
-#sensor_number = str(arguments["sensor"].value)
-#short_or_long_term = str(arguments["longshort"].value)
+room_name = str(arguments["room"].value)
+sensor_number = str(arguments["sensor"].value)
+short_or_long_term = str(arguments["longshort"].value)
 
 data_directory = '/var/www/qdg-pi-web/data/'
 input_directory = data_directory + room_name + "/sensor_" + sensor_number
 output_directory = '/var/www/qdg-pi-web/data/page-data/'
 times_run = 0
 
-while True:
+#while True:
 
-    if(short_or_long_term == 'short'):
-        # process short stuff
-        output_path = output_directory + room_name + '-sensor-' + sensor_number + '-short.csv'
-        output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-short-stats.csv'
+if(short_or_long_term == 'short'):
+    # process short stuff
+    output_path = output_directory + room_name + '-sensor-' + sensor_number + '-short.csv'
+    output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-short-stats.csv'
 
-        process_short_term(input_directory, output_path, 1)
-        process_stats_short_term(output_path, output_path_stats) 
+    process_short_term(input_directory, output_path, 1)
+    process_stats_short_term(output_path, output_path_stats) 
 
 
-    elif (short_or_long_term == 'long'):
-        # process long term stuff
-        output_path = output_directory + room_name + '-sensor-' + sensor_number + '-long.csv'
-        output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-long-stats.csv'
+elif (short_or_long_term == 'long'):
+    # process long term stuff
+    output_path = output_directory + room_name + '-sensor-' + sensor_number + '-long.csv'
+    output_path_stats = output_directory + room_name + '-sensor-' + sensor_number + '-long-stats.csv'
 
-        process_long_term(input_directory, output_path)
-        process_stats_long_term(output_path, output_path_stats)
+    process_long_term(input_directory, output_path)
+    process_stats_long_term(output_path, output_path_stats)
 
-    times_run +=1
-    print times_run
+#    times_run +=1
+#    print times_run
 
 
 

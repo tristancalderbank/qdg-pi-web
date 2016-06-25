@@ -3,6 +3,7 @@ import os
 import redis
 import csv
 import fcntl
+import time
 
 # configuration
 master_table_IP = '10.1.137.162'
@@ -44,6 +45,7 @@ def get_message(pubsub):
         message = pubsub.get_message()
         if (message is not None):
             return message
+        time.sleep(1)
 
 def parse_message(message):
     room = message['channel']
@@ -104,4 +106,6 @@ while True:
         pubsub = server_connection.pubsub(ignore_subscribe_messages=True)
         for room in room_names:
             pubsub.subscribe(room)
+
+    time.sleep(1)
 

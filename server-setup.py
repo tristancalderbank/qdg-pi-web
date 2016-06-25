@@ -1,6 +1,6 @@
 # QDG Pi Project
 # Quantum Degenerate Gases Lab (Madison Research Group)
-# graph-and-stat-table.js
+# server-setup.py
 # date: Jun 3, 2016
 # author: tristan calderbank
 # contact: tristan@alumni.ubc.ca
@@ -24,9 +24,9 @@ install_message("Updating packages via apt-get...")
 call(["sudo", "apt-get", "update"])
 call(["sudo", "apt-get", "upgrade"])
 
-# install apache2 via apt-get
-install_message("Installing apache2 via apt-get")
-call(["sudo", "apt-get", "install", "apache2"])
+# install lighttpd web server
+install_message("Installing lighttpd web server via apt-get")
+call(["sudo", "apt-get", "install", "lighttpd"])
 
 # install python
 install_message("Getting python via apt-get")
@@ -58,24 +58,15 @@ call(["sudo", "mkdir", "/etc/redis"])
 call(["sudo", "mkdir", "/var/redis"])
 call(["sudo", "cp", "utils/redis_init_script", "/etc/init.d/redis_6379"])
 
-# Get repo for website files
-install_message("Cloning web files to /var/www/...")
-operating_directory = "/var/www"
-os.chdir(operating_directory)
-call(["sudo", "git", "clone", "https://github.com/tristancalderbank/qdg-pi-web"])
-
 # Redis / Apache config
-install_message("Configuring redis and apache...")
+install_message("Configuring redis and lighttpd...")
 call(["sudo", "cp", "/var/www/qdg-pi-web/config/6379.conf", "/etc/redis/6379.conf"])
 install_message("Backing up current apache configuration...")
-call(["sudo", "mv", "/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.config"])
-call(["sudo", "mv", "/etc/apache2/sites-available/000-default.conf", "/etc/apache2/sites-available/000-default-backup.conf"])
-install_message("Installing qdg-pi config for apache...")
-call(["sudo", "cp", "/var/www/qdg-pi-web/config/apache2.conf", "/etc/apache2/apache2.conf"])
-call(["sudo", "cp", "/var/www/qdg-pi-web/config/000-default.conf", "/etc/apache2/sites-available/000-default.conf"])
-call(["sudo", "a2enmod", "cgi"])
+call(["sudo", "mv", "/etc/lighttpd/lighttpd.conf", "/etc/lighttpd/lighttpd-backup.conf"])
+install_message("Installing qdg-pi config for lighttpd...")
+call(["sudo", "cp", "/var/www/qdg-pi-web/config/lighttpd.conf", "/etc/lighttpd"])
 
-install_message("Adding apache user as owner of data and python folders in web directory...")
+install_message("Adding lighttpd user as owner of data and python folders in web directory...")
 call(["sudo", "chown", "-R", "www-data", "/var/www/qdg-pi-web/python"])
 call(["sudo", "chown", "-R", "www-data", "/var/www/qdg-pi-web/data"])
 
