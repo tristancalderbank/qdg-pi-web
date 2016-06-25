@@ -1,4 +1,0 @@
-@reboot sudo redis-server /etc/redis/6379.conf
-@reboot sudo python /var/www/qdg-pi-web/python/subscribe.py
-
-

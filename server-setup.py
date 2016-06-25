@@ -73,7 +73,11 @@ call(["sudo", "chown", "-R", "www-data", "/var/www/qdg-pi-web/data"])
 
 # Cronjobs
 install_message("Setting up python subscribe script and redis as cronjobs...")
-call(["sudo", "cp", "/var/www/qdg-pi-web/config/qdg-pi-cron", "/etc/cron.d/qdg-pi-cron"])
+with open("/etc/cron.d/qdg-pi-cron", "ab") as file:
+    file.write("@reboot " + username + " sudo redis-server /etc/redis/6379.conf\n")
+    file.write("@reboot " + username + " python /var/www/qdg-pi-web/python/subscribe.py\n")
+
+# Restart/start everything
 install_message("Restarting lighttpd server...")
 call(["sudo", "service", "lighttpd", "restart"])
 install_message("Starting redis-server...")
