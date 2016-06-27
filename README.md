@@ -4,7 +4,7 @@ Serves temperature, pressure, and humidity data collected by up to 16 sensors us
 
 ###Instructions:
 
-Navigate to /var/www/ and clone the repo in that directory. Run server-setup.py with to install required software. Make sure that on each Raspberry Pi, the ip address in the script "publish-data.py" points to the computer that is hosting the page.
+Navigate to /var/www/ and clone the repo in that directory. Run server-setup.py with sudo priviledges to install required software. Make sure that on each Raspberry Pi, the ip address in the script "publish-data.py" points to the computer that is hosting the page.
 
 ####Note:
 This setup script will install the following dependencies: lighttpd, redis, redis-py, pip, python
