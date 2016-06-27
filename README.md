@@ -2,12 +2,18 @@
 Serves temperature, pressure, and humidity data collected by up to 16 sensors using two Raspberry Pi's.
 
 
-Instructions:
+###Instructions:
 
-Navigate to /var/www/ and clone the repo in that directory. Run server-setup.py to install required software. Make sure that on each Raspberry Pi, the ip address in the script "publish-data.py" points to the computer that is hosting the page.
+Navigate to /var/www/ and clone the repo in that directory. Run server-setup.py with to install required software. Make sure that on each Raspberry Pi, the ip address in the script "publish-data.py" points to the computer that is hosting the page.
 
+####Note:
+This setup script will install the following dependencies: lighttpd, redis, redis-py, pip, python
 
-How it works:
+It then installs configuration files for redis and lighttpd, and sets up cronjobs for starting redis and the python subscribe script upon reboot.
+
+If these changes sound like they will conflict with something already running on the computer, I would advise you to read through the server-setup.py script before running it.
+
+###How it works:
 
 1) The computer which recieves the data from the Raspberry Pis hosts a database server called "redis" which allows a "pubsub" system to be created. A python module called "redis-py" allows all the scripting of this database to be written in python. 
 
