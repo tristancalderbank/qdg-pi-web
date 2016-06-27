@@ -59,7 +59,7 @@ call(["sudo", "mkdir", "/var/redis"])
 call(["sudo", "cp", "utils/redis_init_script", "/etc/init.d/redis_6379"])
 call(["sudo", "mkdir", "/var/redis/6379"])
 
-# Redis / Apache config
+# Redis / Lighttpd config
 install_message("Configuring redis and lighttpd...")
 call(["sudo", "cp", "/var/www/qdg-pi-web/config/6379.conf", "/etc/redis/6379.conf"])
 install_message("Backing up current lighttpd configuration...")
